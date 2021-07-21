@@ -4,6 +4,7 @@ import json
 settings_file = json.load(open("tweets/settings.json"))
 # Replace your bearer token below
 bearer_token = settings_file["bearer_token"]
+cookie = settings_file['cookie']
 max_results = 10
 start_time = "2020-06-11T16:05:06.000Z"
 end_time = "2020-06-11T16:20:00.000Z"
@@ -14,7 +15,7 @@ url = f"https://api.twitter.com/2/tweets/search/all?query={query}&start_time={st
 payload={}
 headers = {
     'Authorization': f'Bearer {bearer_token}',
-    'Cookie': 'guest_id=v1%3A162634498705730258; personalization_id="v1_CpW3pGCqGu0WcG2AdkGNGw=="'
+    'Cookie': cookie
 }
 
 response = requests.request("GET", url, headers=headers, data=payload)
