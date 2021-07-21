@@ -10,7 +10,7 @@ start_time = '2020-06-11T16:05:06.000Z'
 end_time = '2020-06-11T16:20:00.000Z'
 query = 'trump'
 
-url = f'https://api.twitter.com/2/tweets/search/all?query={query}&start_time={start_time}&end_time={end_time}&max_results={max_results}'
+base_url = f'https://api.twitter.com/2/tweets/search/all?query={query}&start_time={start_time}&end_time={end_time}&max_results={max_results}'
 
 payload={}
 headers = {
@@ -18,6 +18,8 @@ headers = {
     'Cookie': cookie
 }
 
-response = requests.request('GET', url, headers=headers, data=payload)
-
-print(response.text)
+next_url = base_url
+for i in range(5):
+    response = requests.request('GET', next_url, headers=headers, data=payload)
+    next_token = eval(response.text)['meta']['next_token']
+    next_url = base_url + f'&next_token={next_token}'
