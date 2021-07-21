@@ -18,8 +18,11 @@ headers = {
     'Cookie': cookie
 }
 
-next_url = base_url
-for i in range(5):
-    response = requests.request('GET', next_url, headers=headers, data=payload)
-    next_token = eval(response.text)['meta']['next_token']
-    next_url = base_url + f'&next_token={next_token}'
+
+with open('tweets/downloaded_tweets.json', 'w') as f:
+    next_url = base_url
+    for i in range(5):
+        response = requests.request('GET', next_url, headers=headers, data=payload)
+        next_token = eval(response.text)['meta']['next_token']
+        next_url = base_url + f'&next_token={next_token}'
+        json.dump(eval(response.text), f, ensure_ascii=False, indent=4)
