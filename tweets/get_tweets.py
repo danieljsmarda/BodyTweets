@@ -1,5 +1,6 @@
 import requests
 import json
+import time
 
 settings_file = json.load(open('tweets/settings.json'))
 # Replace your bearer token below
@@ -19,10 +20,15 @@ headers = {
 }
 
 
-with open('tweets/downloaded_tweets.json', 'w') as f:
+with open('tweets/downloaded_tweets.txt', 'w', encoding='utf-16') as f:
     next_url = base_url
-    for i in range(5):
+    for i in range(15):
         response = requests.request('GET', next_url, headers=headers, data=payload)
         next_token = eval(response.text)['meta']['next_token']
         next_url = base_url + f'&next_token={next_token}'
-        json.dump(eval(response.text), f, ensure_ascii=False, indent=4)
+
+        # Next step:
+        f.write('%s\n' % json.dumps(response.text))
+
+        # 3 Second sleep = 300 requests / 15 minutes
+        time.sleep(1.01)
