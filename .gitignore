@@ -1,5 +1,6 @@
 # Custom
 *.json
+*.txt
 *.code-workspace
 
 # Byte-compiled / optimized / DLL files
