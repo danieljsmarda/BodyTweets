@@ -2,10 +2,15 @@ import requests
 import json
 import time
 
-settings_file = json.load(open('tweets/settings.json'))
+settings_path = '../settings.json'
+write_path = '../private_data/downloaded_tweets.txt'
+
+with open(settings_path, 'r') as f:
+    settings_file = json.load(f)
+    bearer_token = settings_file['bearer_token']
+    cookie = settings_file['cookie']
+
 # Replace your bearer token below
-bearer_token = settings_file['bearer_token']
-cookie = settings_file['cookie']
 max_results = 10
 start_time = '2020-06-11T16:05:06.000Z'
 end_time = '2020-06-11T16:20:00.000Z'
@@ -20,9 +25,9 @@ headers = {
 }
 
 
-with open('tweets/downloaded_tweets.txt', 'w', encoding='utf-16') as f:
+with open(write_path, 'w', encoding='utf-16') as f:
     next_url = base_url
-    for i in range(15):
+    for i in range(5):
         response = requests.request('GET', next_url, headers=headers, data=payload)
         next_token = eval(response.text)['meta']['next_token']
         next_url = base_url + f'&next_token={next_token}'
