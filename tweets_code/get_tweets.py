@@ -31,15 +31,29 @@ headers = {
 }
 
 
-with open(write_path, 'w', encoding='utf-16') as f:
-    next_url = base_url
-    for i in range(5):
-        response = requests.request('GET', next_url, headers=headers, data=payload)
-        next_token = eval(response.text)['meta']['next_token']
-        next_url = base_url + f'&next_token={next_token}'
+def handle_rate(request_fn):
+    def wrapper(max_time=900):
+        start = time.time()
+        request_fn()
+        end = time.time()
+        elapsed = start - end
+        if elapsed < max_time:
+            time.sleep(max_time - elapsed + 1)
+    return wrapper
 
-        # Next step:
-        f.write('%s\n' % json.dumps(response.text))
+@handle_rate
+def send_requests():
+    with open(write_path, 'w', encoding='utf-16') as f:
+        next_url = base_url
+        for i in range(5): # use 180 for maximum
+            response = requests.request('GET', next_url, headers=headers, data=payload)
+            next_token = eval(response.text)['meta']['next_token']
+            next_url = base_url + f'&next_token={next_token}'
 
-        # 3 Second sleep = 300 requests / 15 minutes
-        time.sleep(1.01)
+            # Next step:
+            f.write('%s\n' % json.dumps(response.text))
+
+            # 3 Second sleep = 300 requests / 15 minutes
+            time.sleep(1.01)
+            
+send_requests(max_time=10)
