@@ -3,7 +3,8 @@ import json
 import time
 
 settings_path = '../settings.json'
-write_path = '../private_data/downloaded_tweets.txt'
+dump_path = '../private_data/dump.txt'
+batch_path = '../private_data/batch.txt'
 
 with open(settings_path, 'r') as f:
     settings_file = json.load(f)
@@ -43,17 +44,18 @@ def handle_rate(request_fn):
 
 @handle_rate
 def send_requests():
-    with open(write_path, 'w', encoding='utf-16') as f:
+    with open(dump_path, 'a', encoding='utf-16') as d, open(batch_path, 'a', encoding='utf-16') as b:
+        b.truncate(0)
         next_url = base_url
         for i in range(5): # use 180 for maximum
             response = requests.request('GET', next_url, headers=headers, data=payload)
             next_token = eval(response.text)['meta']['next_token']
             next_url = base_url + f'&next_token={next_token}'
 
-            # Next step:
-            f.write('%s\n' % json.dumps(response.text))
+            d.write('%s\n' % json.dumps(response.text))
+            b.write('%s\n' % json.dumps(response.text))
 
             # 3 Second sleep = 300 requests / 15 minutes
             time.sleep(1.01)
-            
-send_requests(max_time=10)
+
+send_requests(max_time=3)
