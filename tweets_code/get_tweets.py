@@ -18,4 +18,6 @@ params = {
 params_string = '&'.join([key + '=' + value for key, value in params.items()])
 base_url = 'https://api.twitter.com/2/tweets/search/all?' + params_string
 
-send_n_requests(dump_path, batch_path, base_url, n=5, max_time=3)
+for in range(3):
+    send_n_requests(dump_path, batch_path, base_url, n=5, max_time=3)
+
