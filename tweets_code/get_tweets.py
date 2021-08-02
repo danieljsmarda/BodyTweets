@@ -11,12 +11,18 @@ with open(settings_path, 'r') as f:
     cookie = settings_file['cookie']
 
 # Replace your bearer token below
-max_results = 10
-start_time = '2020-06-11T16:05:06.000Z'
-end_time = '2020-06-11T16:20:00.000Z'
-query = 'trump'
+params = {
+    'max_results' : '10',
+    'start_time' : '2020-06-11T16:05:06.000Z',
+    'end_time' : '2020-06-11T16:20:00.000Z',
+    'query' : 'trump lang:en',
+    'tweet.fields' : 'author_id',
+    'expansions' : 'author_id',
+    'user.fields' : 'location'
+}
 
-base_url = f'https://api.twitter.com/2/tweets/search/all?query={query}&start_time={start_time}&end_time={end_time}&max_results={max_results}'
+params_string = '&'.join([key + '=' + value for key, value in params.items()])
+base_url = 'https://api.twitter.com/2/tweets/search/all?' + params_string
 
 payload={}
 headers = {
