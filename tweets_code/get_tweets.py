@@ -1,15 +1,8 @@
-import requests
 import json
-import time
+from send_requests import send_n_requests
 
-settings_path = '../settings.json'
 dump_path = '../private_data/dump.txt'
 batch_path = '../private_data/batch.txt'
-
-with open(settings_path, 'r') as f:
-    settings_file = json.load(f)
-    bearer_token = settings_file['bearer_token']
-    cookie = settings_file['cookie']
 
 # Replace your bearer token below
 params = {
@@ -25,37 +18,4 @@ params = {
 params_string = '&'.join([key + '=' + value for key, value in params.items()])
 base_url = 'https://api.twitter.com/2/tweets/search/all?' + params_string
 
-payload={}
-headers = {
-    'Authorization': f'Bearer {bearer_token}',
-    'Cookie': cookie
-}
-
-
-def handle_rate(request_fn):
-    def wrapper(max_time=900):
-        start = time.time()
-        request_fn()
-        end = time.time()
-        elapsed = start - end
-        if elapsed < max_time:
-            time.sleep(max_time - elapsed + 1)
-    return wrapper
-
-@handle_rate
-def send_requests():
-    with open(dump_path, 'a', encoding='utf-16') as d, open(batch_path, 'a', encoding='utf-16') as b:
-        b.truncate(0)
-        next_url = base_url
-        for i in range(5): # use 180 for maximum
-            response = requests.request('GET', next_url, headers=headers, data=payload)
-            next_token = eval(response.text)['meta']['next_token']
-            next_url = base_url + f'&next_token={next_token}'
-
-            d.write('%s\n' % json.dumps(response.text))
-            b.write('%s\n' % json.dumps(response.text))
-
-            # 3 Second sleep = 300 requests / 15 minutes
-            time.sleep(1.01)
-
-send_requests(max_time=3)
+send_n_requests(dump_path, batch_path, base_url, n=5, max_time=3)
