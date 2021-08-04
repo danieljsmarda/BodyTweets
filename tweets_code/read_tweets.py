@@ -1,13 +1,13 @@
 import pandas as pd
-import shelve
+
+batch_path = '../private_data/batch.txt'
+geolocation_users_path = '../private_data/interim/geolocation_users.parquet'
+geolocation_tweets_path = '../private_data/interim/geolocation_tweets.parquet'
 
 def handle_surrogates(text):
     return text.encode('utf-16', 'surrogatepass').decode('utf-16')
 
-tweet_processing_shelf_path = '../private_data/tweet_processing'
-
 def parse_raw_tweets(batch_path):
-    shelf = shelve.open(tweet_processing_shelf_path)
     with open(batch_path, 'r', encoding='utf-16-le') as f:
         response = eval(eval(f.readline()))
         tweets_df = pd.DataFrame(columns=['author_id', 'tweet_id', 'tweet_text'])
@@ -27,6 +27,5 @@ def parse_raw_tweets(batch_path):
                 }, ignore_index=True)
             except KeyError: # user doesn't have location string
                 continue
-        shelf['raw_tweets_df'] = tweets_df
-        shelf['users_df'] = users_df
-    shelf.close()
+        tweets_df.to_parquet(geolocation_tweets_path, compression=None)
+        users_df.to_parquet(geolocation_users_path, compression=None)
