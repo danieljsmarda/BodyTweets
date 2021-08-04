@@ -25,8 +25,8 @@ def handle_rate(request_fn):
             time.sleep(max_time - elapsed + 1)
     return wrapper
 
-@handle_rate
 def send_n_requests(dump_path, batch_path, base_url, next_token='', n=5):
+    '''n = Total number of requests to send in each 15-minute period'''
     shelf = shelve.open('../private_data/tweet_processing')
     with open(dump_path, 'a', encoding='utf-16') as d, open(batch_path, 'a', encoding='utf-16') as b:
         b.truncate(0)
