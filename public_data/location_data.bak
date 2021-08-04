@@ -1,2 +1,5 @@
 'state_strings', (297472, 1887)
-'foreign_entities_df', (923136, 563766)
+'foreign_entities_df', (1487360, 537714)
+'states_df', (2051584, 2674)
+'states_dict', (2056192, 2177)
+'all_entities', (2058752, 1017498)

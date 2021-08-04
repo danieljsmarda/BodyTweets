@@ -11,7 +11,7 @@ def parse_raw_tweets(batch_path):
     with open(batch_path, 'r', encoding='utf-16-le') as f:
         response = eval(eval(f.readline()))
         tweets_df = pd.DataFrame(columns=['author_id', 'tweet_id', 'tweet_text'])
-        users_df = pd.DataFrame(coumns=['author_id', 'location'])
+        users_df = pd.DataFrame(columns=['author_id', 'location'])
         for tweet in response['data']:
             # Handle surrogate pairs
             tweets_df = tweets_df.append({
@@ -27,8 +27,6 @@ def parse_raw_tweets(batch_path):
                 }, ignore_index=True)
             except KeyError: # user doesn't have location string
                 continue
-        shelf['next_token'] = response['meta']['next_token']
         shelf['raw_tweets_df'] = tweets_df
         shelf['users_df'] = users_df
-        shelf['
     shelf.close()

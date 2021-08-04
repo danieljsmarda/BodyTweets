@@ -1,4 +1,3 @@
-import json
 from send_requests import send_n_requests
 
 dump_path = '../private_data/dump.txt'
@@ -6,7 +5,7 @@ batch_path = '../private_data/batch.txt'
 
 # Replace your bearer token below
 params = {
-    'max_results' : '10',
+    'max_results' : '500',
     'start_time' : '2020-06-11T16:05:06.000Z',
     'end_time' : '2020-06-11T16:20:00.000Z',
     'query' : 'trump lang:en',
@@ -18,6 +17,14 @@ params = {
 params_string = '&'.join([key + '=' + value for key, value in params.items()])
 base_url = 'https://api.twitter.com/2/tweets/search/all?' + params_string
 
-for in range(3):
-    send_n_requests(dump_path, batch_path, base_url, n=5, max_time=3)
+def extract_next_token(filename):
+    with open(filename, 'r', encoding='utf-16-le') as f:
+        lines = f.read().splitlines()
+        last_line = lines[-1]
+        next_token = eval(eval(last_line))['meta']['next_token']
+    return next_token
 
+for i in range(1):
+    next_token = extract_next_token(batch_path)
+    send_n_requests(dump_path, batch_path, base_url, next_token=next_token, n=1, max_time=3)
+    
