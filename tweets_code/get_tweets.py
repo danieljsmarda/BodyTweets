@@ -1,10 +1,11 @@
 from request_management import send_n_requests
+from geolocation import geolocate_tweets
+
 dump_path = '../private_data/dump.txt'
 batch_path = '../private_data/batch.txt'
 
-
 params = {
-    'max_results' : '10', # Results per request
+    'max_results' : '500', # Results per request
     'start_time' : '2020-06-11T16:05:06.000Z',
     'end_time' : '2020-06-11T16:20:00.000Z',
     'query' : 'trump lang:en',
@@ -25,6 +26,7 @@ def extract_next_token(filename):
 def init_batch():
     for i in range(1):
         next_token = extract_next_token(batch_path)
-        send_n_requests(dump_path, batch_path, base_url, next_token=next_token, n=3)
+        send_n_requests(dump_path, batch_path, base_url, next_token=next_token, n=1)
+        geolocate_tweets()
 init_batch()
         
