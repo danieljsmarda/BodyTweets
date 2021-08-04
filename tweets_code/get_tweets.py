@@ -1,5 +1,4 @@
-from request_management import send_n_requests, handle_rate
-
+from request_management import send_n_requests
 dump_path = '../private_data/dump.txt'
 batch_path = '../private_data/batch.txt'
 
@@ -23,10 +22,9 @@ def extract_next_token(filename):
         next_token = eval(eval(last_line))['meta']['next_token']
     return next_token
 
-@handle_rate
 def init_batch():
     for i in range(1):
         next_token = extract_next_token(batch_path)
         send_n_requests(dump_path, batch_path, base_url, next_token=next_token, n=3)
-init_batch(max_time=3)
+init_batch()
         
