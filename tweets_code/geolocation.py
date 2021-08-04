@@ -9,10 +9,8 @@ from read_tweets import parse_raw_tweets
 # Tweet Data
 batch_path = '../private_data/batch.txt'
 parse_raw_tweets(batch_path)
-tweet_shelf = shelve.open('../private_data/tweet_processing')
-users_df = tweet_shelf['users_df']
-tweets_df = tweet_shelf['tweets_df']
-tweet_shelf.close()
+users_df = pd.read_parquet('../private_data/interim/geolocation_users.parquet')
+tweets_df = pd.read_parquet('../private_data/interim/geolocation_tweets.parquet')
 # Location Data loading
 location_shelf = shelve.open('../public_data/location_data')
 state_strings = location_shelf['state_strings']
@@ -48,14 +46,18 @@ def city_search(loc_s):
         return 'foreign'
 
 # --- Saving helper function ---
-def append_results_to_shelf(filename, key, data):
-    shelf = shelve.open(filename)
-    if key not in shelf.keys():
-        shelf[key] = pd.DataFrame(columns=data.columns)
-    df = shelf[key]
-    df = df.append(data)
-    shelf[key] = df
-    shelf.close()
+interim_path = '../private_data/interim/tweet_locations'
+master_path = '../private_data/master_dfs'
+def append_results_parquet(file_location, data):
+    file_name = file_location+'.parquet.gzip'
+    try:
+        df = pd.read_parquet(file_name)
+    except FileNotFoundError as e:
+        df = pd.DataFrame(columns=data.columns)
+    finally:
+        df = df.append(data)
+        df.to_parquet(file_name, compression='gzip')
+
 
 # -- Main function ---
 def geolocate_tweets():
@@ -71,6 +73,5 @@ def geolocate_tweets():
     merged['final_state'] = np.where(~(merged['state_from_loc_str'].isna()), merged['state_from_loc_str'], merged['state_from_city'])
     # Only keep US data
     filtered = merged[~(merged['final_state'].isin(['no match', 'foreign']))]
-
-    append_results_to_shelf(f, 'locations', filtered)
-    append_results_to_shelf(master_path, 'geolocated', filtered[['author_id', 'tweet_id', 'tweet_text', 'final_state']])
+    append_results_parquet(interim_path, filtered)
+    append_results_parquet(master_path, filtered[['author_id', 'tweet_id', 'tweet_text', 'final_state']])
