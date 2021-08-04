@@ -1,7 +1,9 @@
 # Custom
-*.json
+settings.json
+private_data/
 *.txt
 *.code-workspace
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
