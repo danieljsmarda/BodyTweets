@@ -29,4 +29,3 @@ def init_batch():
         send_n_requests(dump_path, batch_path, base_url, next_token=next_token, n=1)
         geolocate_tweets()
 init_batch()
-        
