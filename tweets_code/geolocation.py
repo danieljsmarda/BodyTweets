@@ -13,8 +13,8 @@ with open(settings_path, 'r') as f:
     batch_users_path = settings['filepaths']['batch_users_path']
     batch_tweets_path = settings['filepaths']['batch_tweets_path']
     location_shelf_path = settings['filepaths']['location_shelf_path']
-    geolocated_interim_path = settings['filepaths']['geolocated_interim_path']
-    geolocated_tweets_path = settings['filepaths']['geolocated_tweets_path']
+    geolocated_all_columns_path = settings['filepaths']['geolocated_all_columns_path']
+    geolocated_relevant_columns_path = settings['filepaths']['geolocated_relevant_columns_path']
 
 
 # Tweet Data
@@ -79,7 +79,7 @@ def geolocate_tweets():
                                     merged['state_from_loc_str'], merged['state_from_city'])
     # Only keep US data
     filtered = merged[~(merged['final_state'].isin(['no match', 'foreign']))]
-    append_results_parquet(geolocated_interim_path, filtered)
-    append_results_parquet(geolocated_tweets_path, filtered.drop(
+    append_results_parquet(geolocated_all_columns_path, filtered)
+    append_results_parquet(geolocated_relevant_columns_path, filtered.drop(
                            columns=['location','state_from_loc_str', 'state_from_city']))
-    print(f'Geolocated tweets successfully saved to {geolocated_tweets_path}')
+    print(f'Geolocated tweets successfully saved to {geolocated_relevant_columns_path}')
