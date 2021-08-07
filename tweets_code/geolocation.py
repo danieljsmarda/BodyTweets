@@ -56,12 +56,12 @@ def city_search(loc_s):
 # --- Saving helper function ---
 def append_results_parquet(file_location, data):
     try:
-        df = pd.read_parquet(file_name)
+        df = pd.read_parquet(file_location)
     except FileNotFoundError as e:
         df = pd.DataFrame(columns=data.columns)
     finally:
         df = df.append(data)
-        df.to_parquet(file_name, compression='gzip')
+        df.to_parquet(file_location, compression='gzip')
 
 
 # -- Main function ---
