@@ -13,8 +13,8 @@ with open(settings_path, 'r') as f:
     geolocation_users_path = settings['filepaths']['geolocation_users_path']
     geolocation_tweets_path = settings['filepaths']['geolocation_tweets_path']
     location_shelf_path = settings['filepaths']['location_shelf_path']
-    interim_path = settings['filepaths']['interim_path']
-    master_path = settings['filepaths']['master_path']
+    geolocated_interim_path = settings['filepaths']['geolocated_interim_path']
+    geolocated_tweets_path = settings['filepaths']['geolocated_tweets_path']
 
 
 # Tweet Data
@@ -79,5 +79,5 @@ def geolocate_tweets():
     merged['final_state'] = np.where(~(merged['state_from_loc_str'].isna()), merged['state_from_loc_str'], merged['state_from_city'])
     # Only keep US data
     filtered = merged[~(merged['final_state'].isin(['no match', 'foreign']))]
-    append_results_parquet(interim_path, filtered)
-    append_results_parquet(master_path, filtered[['author_id', 'tweet_id', 'tweet_text', 'final_state']])
+    append_results_parquet(geolocated_interim_path, filtered)
+    append_results_parquet(geolocated_tweets_path, filtered[['author_id', 'tweet_id', 'tweet_text', 'final_state']])
