@@ -25,10 +25,9 @@ def handle_rate(request_fn):
             time.sleep(max_time - elapsed + 1)
     return wrapper
 
-def send_n_requests(dump_path, batch_path, base_url, next_token='', n=5):
+def send_n_requests(raw_tweets_dump_path, batch_path, base_url, next_token='', n=5):
     '''n = Total number of requests to send in each 15-minute period'''
-    shelf = shelve.open('../private_data/tweet_processing')
-    with open(dump_path, 'a', encoding='utf-16') as d, open(batch_path, 'a', encoding='utf-16') as b:
+    with open(raw_tweets_dump_path, 'a', encoding='utf-16') as d, open(batch_path, 'a', encoding='utf-16') as b:
         b.truncate(0)
         url = base_url
         for i in range(n): # use 180 for maximum
@@ -36,11 +35,9 @@ def send_n_requests(dump_path, batch_path, base_url, next_token='', n=5):
                 url = base_url + f'&next_token={next_token}'
             response = requests.request('GET', url, headers=headers, data=payload)
             next_token = eval(response.text)['meta']['next_token']
-            shelf['next_token'] = next_token
 
             d.write('%s\n' % json.dumps(response.text))
             b.write('%s\n' % json.dumps(response.text))
 
             # 3 Second sleep = 300 requests / 15 minutes
             time.sleep(1.01)
-    shelf.close()
