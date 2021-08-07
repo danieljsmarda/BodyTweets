@@ -1,7 +1,6 @@
 import time
 import requests
 import json
-import shelve
 
 settings_path = '../settings.json'
 with open(settings_path, 'r') as f:
