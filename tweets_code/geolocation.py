@@ -18,7 +18,6 @@ with open(settings_path, 'r') as f:
 
 
 # Tweet Data
-parse_raw_tweets(raw_tweets_batch_path)
 users_df = pd.read_parquet(batch_users_path)
 tweets_df = pd.read_parquet(batch_tweets_path)
 # Location Data loading
@@ -66,6 +65,7 @@ def append_results_parquet(file_location, data):
 
 # -- Main function ---
 def geolocate_tweets():
+    parse_raw_tweets(raw_tweets_batch_path)
     merged = pd.merge(tweets_df, users_df, on='author_id')
     merged['state_from_loc_str'] = merged['location'].apply(get_state_from_loc_str)
     merged['state_from_city'] = merged['location'].apply(city_search)
@@ -80,3 +80,4 @@ def geolocate_tweets():
     filtered = merged[~(merged['final_state'].isin(['no match', 'foreign']))]
     append_results_parquet(geolocated_interim_path, filtered)
     append_results_parquet(geolocated_tweets_path, filtered[['author_id', 'tweet_id', 'tweet_text', 'final_state']])
+    print(f'Geolocated tweets successfully saved to {geolocated_tweets_path}')
