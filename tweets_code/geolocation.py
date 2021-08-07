@@ -1,26 +1,34 @@
 import shelve
+import json
 import pandas as pd
 import numpy as np
 from nltk.tokenize import TweetTokenizer
 from nltk.util import ngrams
 from read_tweets import parse_raw_tweets
 
+settings_path = '../settings.json'
+with open(settings_path, 'r') as f:
+    settings = json.load(f)
+    raw_tweets_batch_path = settings['filepaths']['raw_tweets_batch_path']
+    batch_users_path = settings['filepaths']['batch_users_path']
+    batch_tweets_path = settings['filepaths']['batch_tweets_path']
+    location_shelf_path = settings['filepaths']['location_shelf_path']
+    geolocated_interim_path = settings['filepaths']['geolocated_interim_path']
+    geolocated_tweets_path = settings['filepaths']['geolocated_tweets_path']
+
 
 # Tweet Data
-batch_path = '../private_data/batch.txt'
-parse_raw_tweets(batch_path)
-users_df = pd.read_parquet('../private_data/interim/geolocation_users.parquet')
-tweets_df = pd.read_parquet('../private_data/interim/geolocation_tweets.parquet')
+parse_raw_tweets(raw_tweets_batch_path)
+users_df = pd.read_parquet(batch_users_path)
+tweets_df = pd.read_parquet(batch_tweets_path)
 # Location Data loading
-location_shelf = shelve.open('../public_data/location_data')
+location_shelf = shelve.open(location_shelf_path)
 state_strings = location_shelf['state_strings']
 states_df = location_shelf['states_df']
 states_dict = location_shelf['states_dict']
 all_entities = location_shelf['all_entities']
 location_shelf.close()
 
-interim_path = '../private_data/interim/tweet_locations'
-master_path = '../private_data/master_dfs'
 
 # --- String Processing functions ---
 def get_ngrams(text, n):
@@ -46,17 +54,14 @@ def city_search(loc_s):
         return 'foreign'
 
 # --- Saving helper function ---
-interim_path = '../private_data/interim/tweet_locations'
-master_path = '../private_data/master_dfs'
 def append_results_parquet(file_location, data):
-    file_name = file_location+'.parquet.gzip'
     try:
-        df = pd.read_parquet(file_name)
+        df = pd.read_parquet(file_location)
     except FileNotFoundError as e:
         df = pd.DataFrame(columns=data.columns)
     finally:
         df = df.append(data)
-        df.to_parquet(file_name, compression='gzip')
+        df.to_parquet(file_location, compression='gzip')
 
 
 # -- Main function ---
@@ -73,5 +78,5 @@ def geolocate_tweets():
     merged['final_state'] = np.where(~(merged['state_from_loc_str'].isna()), merged['state_from_loc_str'], merged['state_from_city'])
     # Only keep US data
     filtered = merged[~(merged['final_state'].isin(['no match', 'foreign']))]
-    append_results_parquet(interim_path, filtered)
-    append_results_parquet(master_path, filtered[['author_id', 'tweet_id', 'tweet_text', 'final_state']])
+    append_results_parquet(geolocated_interim_path, filtered)
+    append_results_parquet(geolocated_tweets_path, filtered[['author_id', 'tweet_id', 'tweet_text', 'final_state']])
