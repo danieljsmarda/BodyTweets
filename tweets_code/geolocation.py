@@ -1,26 +1,35 @@
 import shelve
+import json
 import pandas as pd
 import numpy as np
 from nltk.tokenize import TweetTokenizer
 from nltk.util import ngrams
 from read_tweets import parse_raw_tweets
 
+settings_path = '../settings.json'
+with open(settings_path, 'r') as f:
+    settings = json.load(f)
+    batch_path = settings['filepaths']['batch_path']
+    geolocation_users_path = settings['filepaths']['geolocation_users_path']
+    geolocation_tweets_path = settings['filepaths']['geolocation_tweets_path']
+    location_shelf_path = settings['filepaths']['location_shelf_path']
+
 
 # Tweet Data
-batch_path = '../private_data/batch.txt'
+#batch_path = '../private_data/batch.txt'
 parse_raw_tweets(batch_path)
-users_df = pd.read_parquet('../private_data/interim/geolocation_users.parquet')
-tweets_df = pd.read_parquet('../private_data/interim/geolocation_tweets.parquet')
+users_df = pd.read_parquet(geolocation_users_path)
+tweets_df = pd.read_parquet(geolocation_tweets_path)
 # Location Data loading
-location_shelf = shelve.open('../public_data/location_data')
+location_shelf = shelve.open(location_shelf_path)
 state_strings = location_shelf['state_strings']
 states_df = location_shelf['states_df']
 states_dict = location_shelf['states_dict']
 all_entities = location_shelf['all_entities']
 location_shelf.close()
 
-interim_path = '../private_data/interim/tweet_locations'
-master_path = '../private_data/master_dfs'
+#interim_path = '../private_data/interim/tweet_locations'
+#master_path = '../private_data/master_dfs'
 
 # --- String Processing functions ---
 def get_ngrams(text, n):

@@ -1,8 +1,19 @@
+import json
 from request_management import send_n_requests
 from geolocation import geolocate_tweets
 
-dump_path = '../private_data/dump.txt'
-batch_path = '../private_data/batch.txt'
+settings_path = '../settings.json'
+with open(settings_path, 'r') as f:
+    settings = json.load(f)
+    dump_path = settings['filepaths']['dump_path']
+    batch_path = settings['filepaths']['batch_path']
+    geolocation_users_path = settings['filepaths']['geolocation_users_path']
+    geolocation_tweets_path = settings['filepaths']['geolocation_tweets_path']
+
+#dump_path = '../private_data/dump.txt'
+#batch_path = '../private_data/batch.txt'
+#geolocation_users_path = '../private_data/interim/geolocation_users.parquet'
+#geolocation_tweets_path = '../private_data/interim/geolocation_tweets.parquet'
 
 params = {
     'max_results' : '500', # Results per request

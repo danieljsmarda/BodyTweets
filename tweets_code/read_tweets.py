@@ -1,8 +1,16 @@
+import json
 import pandas as pd
 
-batch_path = '../private_data/batch.txt'
-geolocation_users_path = '../private_data/interim/geolocation_users.parquet'
-geolocation_tweets_path = '../private_data/interim/geolocation_tweets.parquet'
+settings_path = '../settings.json'
+with open(settings_path, 'r') as f:
+    settings = json.load(f)
+    batch_path = settings['filepaths']['batch_path']
+    geolocation_users_path = settings['filepaths']['geolocation_users_path']
+    geolocation_tweets_path = settings['filepaths']['geolocation_tweets_path']
+
+#batch_path = '../private_data/batch.txt'
+#geolocation_users_path = '../private_data/interim/geolocation_users.parquet'
+#geolocation_tweets_path = '../private_data/interim/geolocation_tweets.parquet'
 
 def handle_surrogates(text):
     return text.encode('utf-16', 'surrogatepass').decode('utf-16')

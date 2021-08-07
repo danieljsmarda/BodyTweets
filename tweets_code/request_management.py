@@ -5,9 +5,9 @@ import shelve
 
 settings_path = '../settings.json'
 with open(settings_path, 'r') as f:
-    settings_file = json.load(f)
-    bearer_token = settings_file['bearer_token']
-    cookie = settings_file['cookie']
+    settings = json.load(f)
+    bearer_token = settings['bearer_token']
+    cookie = settings['cookie']
 
 payload={}
 headers = {
