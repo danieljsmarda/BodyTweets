@@ -38,8 +38,9 @@ def extract_next_token(filename):
     return next_token
 
 def init_batch():
+    next_token = ''
     for i in range(1):
+        send_n_requests(raw_tweets_dump_path, raw_tweets_batch_path, base_url, next_token=next_token, n=3)
         next_token = extract_next_token(raw_tweets_batch_path)
-        send_n_requests(raw_tweets_dump_path, raw_tweets_batch_path, base_url, next_token=next_token, n=1)
         geolocate_tweets()
 init_batch()
