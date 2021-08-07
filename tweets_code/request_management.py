@@ -25,9 +25,9 @@ def handle_rate(request_fn):
             time.sleep(max_time - elapsed + 1)
     return wrapper
 
-def send_n_requests(raw_tweets_dump_path, batch_path, base_url, next_token='', n=5):
+def send_n_requests(raw_tweets_dump_path, raw_tweets_batch_path, base_url, next_token='', n=5):
     '''n = Total number of requests to send in each 15-minute period'''
-    with open(raw_tweets_dump_path, 'a', encoding='utf-16') as d, open(batch_path, 'a', encoding='utf-16') as b:
+    with open(raw_tweets_dump_path, 'a', encoding='utf-16') as d, open(raw_tweets_batch_path, 'a', encoding='utf-16') as b:
         b.truncate(0)
         url = base_url
         for i in range(n): # use 180 for maximum

@@ -6,9 +6,9 @@ settings_path = '../settings.json'
 with open(settings_path, 'r') as f:
     settings = json.load(f)
     raw_tweets_dump_path = settings['filepaths']['raw_tweets_dump_path']
-    batch_path = settings['filepaths']['batch_path']
-    geolocation_users_path = settings['filepaths']['geolocation_users_path']
-    geolocation_tweets_path = settings['filepaths']['geolocation_tweets_path']
+    raw_tweets_batch_path = settings['filepaths']['raw_tweets_batch_path']
+    batch_users_path = settings['filepaths']['batch_users_path']
+    batch_tweets_path = settings['filepaths']['batch_tweets_path']
 
 params = {
     'max_results' : '500', # Results per request
@@ -31,7 +31,7 @@ def extract_next_token(filename):
 
 def init_batch():
     for i in range(1):
-        next_token = extract_next_token(batch_path)
-        send_n_requests(raw_tweets_dump_path, batch_path, base_url, next_token=next_token, n=1)
+        next_token = extract_next_token(raw_tweets_batch_path)
+        send_n_requests(raw_tweets_dump_path, raw_tweets_batch_path, base_url, next_token=next_token, n=1)
         geolocate_tweets()
 init_batch()
