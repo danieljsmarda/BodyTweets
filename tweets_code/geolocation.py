@@ -9,18 +9,18 @@ from read_tweets import parse_raw_tweets
 settings_path = '../settings.json'
 with open(settings_path, 'r') as f:
     settings = json.load(f)
-    batch_path = settings['filepaths']['batch_path']
-    geolocation_users_path = settings['filepaths']['geolocation_users_path']
-    geolocation_tweets_path = settings['filepaths']['geolocation_tweets_path']
+    raw_tweets_batch_path = settings['filepaths']['raw_tweets_batch_path']
+    batch_users_path = settings['filepaths']['batch_users_path']
+    batch_tweets_path = settings['filepaths']['batch_tweets_path']
     location_shelf_path = settings['filepaths']['location_shelf_path']
     geolocated_interim_path = settings['filepaths']['geolocated_interim_path']
     geolocated_tweets_path = settings['filepaths']['geolocated_tweets_path']
 
 
 # Tweet Data
-parse_raw_tweets(batch_path)
-users_df = pd.read_parquet(geolocation_users_path)
-tweets_df = pd.read_parquet(geolocation_tweets_path)
+parse_raw_tweets(raw_tweets_batch_path)
+users_df = pd.read_parquet(batch_users_path)
+tweets_df = pd.read_parquet(batch_tweets_path)
 # Location Data loading
 location_shelf = shelve.open(location_shelf_path)
 state_strings = location_shelf['state_strings']
@@ -55,7 +55,6 @@ def city_search(loc_s):
 
 # --- Saving helper function ---
 def append_results_parquet(file_location, data):
-    file_name = file_location+'.parquet.gzip'
     try:
         df = pd.read_parquet(file_name)
     except FileNotFoundError as e:
