@@ -9,7 +9,7 @@ with open(settings_path, 'r') as f:
     raw_tweets_batch_path = settings['filepaths']['raw_tweets_batch_path']
     batch_users_path = settings['filepaths']['batch_users_path']
     batch_tweets_path = settings['filepaths']['batch_tweets_path']
-    query_times_path = settings['filepaths']['query_times_paths']
+    query_times_path = settings['filepaths']['query_times_path']
 
 with open('../public_data/body_vocab.txt', 'r') as f:
     body_words_list = [word.strip() for word in f.readlines()]
@@ -45,7 +45,7 @@ def extract_next_token(filename):
 def init_batch():
     next_token = ''
     for i in range(1):
-        send_n_requests(raw_tweets_dump_path, raw_tweets_batch_path, base_url, next_token=next_token, n=180)
+        send_n_requests(raw_tweets_dump_path, raw_tweets_batch_path, base_url, next_token=next_token, n=1)
         next_token = extract_next_token(raw_tweets_batch_path)
         geolocate_tweets()
 init_batch()

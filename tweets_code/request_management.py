@@ -30,7 +30,7 @@ def send_n_requests(raw_tweets_dump_path, raw_tweets_batch_path, base_url, next_
     with open(raw_tweets_dump_path, 'a', encoding='utf-16') as d, open(raw_tweets_batch_path, 'a', encoding='utf-16') as b:
         b.truncate(0)
         url = base_url
-        for i in tqdm(range(180), 'Requests in this batch: '): # use 180 for maximum
+        for i in tqdm(range(n), 'Requests in this batch: '): # use 180 for maximum
             if next_token != '':
                 url = base_url + f'&next_token={next_token}'
             response = requests.request('GET', url, headers=headers, data=payload)

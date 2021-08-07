@@ -17,9 +17,6 @@ with open(settings_path, 'r') as f:
     geolocated_relevant_columns_path = settings['filepaths']['geolocated_relevant_columns_path']
 
 
-# Tweet Data
-users_df = pd.read_parquet(batch_users_path)
-tweets_df = pd.read_parquet(batch_tweets_path)
 # Location Data loading
 location_shelf = shelve.open(location_shelf_path)
 state_strings = location_shelf['state_strings']
@@ -66,6 +63,9 @@ def append_results_parquet(file_location, data):
 # -- Main function ---
 def geolocate_tweets():
     parse_raw_tweets(raw_tweets_batch_path)
+    users_df = pd.read_parquet(batch_users_path)
+    tweets_df = pd.read_parquet(batch_tweets_path)
+    
     merged = pd.merge(tweets_df, users_df, on='author_id')
     merged['state_from_loc_str'] = merged['location'].apply(get_state_from_loc_str)
     merged['state_from_city'] = merged['location'].apply(city_search)
