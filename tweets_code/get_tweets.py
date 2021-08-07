@@ -10,11 +10,6 @@ with open(settings_path, 'r') as f:
     geolocation_users_path = settings['filepaths']['geolocation_users_path']
     geolocation_tweets_path = settings['filepaths']['geolocation_tweets_path']
 
-#dump_path = '../private_data/dump.txt'
-#batch_path = '../private_data/batch.txt'
-#geolocation_users_path = '../private_data/interim/geolocation_users.parquet'
-#geolocation_tweets_path = '../private_data/interim/geolocation_tweets.parquet'
-
 params = {
     'max_results' : '500', # Results per request
     'start_time' : '2020-06-11T16:05:06.000Z',

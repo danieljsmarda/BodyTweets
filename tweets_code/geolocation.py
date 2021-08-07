@@ -13,10 +13,11 @@ with open(settings_path, 'r') as f:
     geolocation_users_path = settings['filepaths']['geolocation_users_path']
     geolocation_tweets_path = settings['filepaths']['geolocation_tweets_path']
     location_shelf_path = settings['filepaths']['location_shelf_path']
+    interim_path = settings['filepaths']['interim_path']
+    master_path = settings['filepaths']['master_path']
 
 
 # Tweet Data
-#batch_path = '../private_data/batch.txt'
 parse_raw_tweets(batch_path)
 users_df = pd.read_parquet(geolocation_users_path)
 tweets_df = pd.read_parquet(geolocation_tweets_path)
@@ -28,8 +29,6 @@ states_dict = location_shelf['states_dict']
 all_entities = location_shelf['all_entities']
 location_shelf.close()
 
-#interim_path = '../private_data/interim/tweet_locations'
-#master_path = '../private_data/master_dfs'
 
 # --- String Processing functions ---
 def get_ngrams(text, n):
@@ -55,8 +54,6 @@ def city_search(loc_s):
         return 'foreign'
 
 # --- Saving helper function ---
-interim_path = '../private_data/interim/tweet_locations'
-master_path = '../private_data/master_dfs'
 def append_results_parquet(file_location, data):
     file_name = file_location+'.parquet.gzip'
     try:
