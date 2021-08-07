@@ -20,7 +20,7 @@ params = {
     'start_time' : '2015-01-11T00:00:00.000Z',
     'end_time' : '2015-01-11T23:59:00.000Z',
     'query' : body_words_string + ' (lang:en OR lang:und) -is:nullcast',
-    'tweet.fields' : 'author_id',
+    'tweet.fields' : 'author_id,created_at',
     'expansions' : 'author_id',
     'user.fields' : 'location'
 }

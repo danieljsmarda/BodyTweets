@@ -15,14 +15,15 @@ def handle_surrogates(text):
 def parse_raw_tweets(raw_tweets_batch_path):
     with open(raw_tweets_batch_path, 'r', encoding='utf-16-le') as f:
         response = eval(eval(f.readline()))
-        tweets_df = pd.DataFrame(columns=['author_id', 'tweet_id', 'tweet_text'])
+        tweets_df = pd.DataFrame(columns=['author_id', 'tweet_id', 'tweet_text', 'created_at'])
         users_df = pd.DataFrame(columns=['author_id', 'location'])
         for tweet in response['data']:
             # Handle surrogate pairs
             tweets_df = tweets_df.append({
                 'author_id': tweet['author_id'],
                 'tweet_id': tweet['id'],
-                'tweet_text': handle_surrogates(tweet['text'])
+                'tweet_text': handle_surrogates(tweet['text']),
+                'created_at': tweet['created_at']
             }, ignore_index=True)
         for user in response['includes']['users']:
             try:
