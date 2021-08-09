@@ -2,6 +2,7 @@ import shelve
 import json
 import pandas as pd
 import numpy as np
+from tqdm import tqdm
 from nltk.tokenize import TweetTokenizer
 from nltk.util import ngrams
 from read_tweets import parse_raw_tweets
@@ -65,10 +66,12 @@ def geolocate_tweets():
     parse_raw_tweets(raw_tweets_batch_path)
     users_df = pd.read_parquet(batch_users_path)
     tweets_df = pd.read_parquet(batch_tweets_path)
-    
+
     merged = pd.merge(tweets_df, users_df, on='author_id')
-    merged['state_from_loc_str'] = merged['location'].apply(get_state_from_loc_str)
-    merged['state_from_city'] = merged['location'].apply(city_search)
+    tqdm.pandas(desc='Getting States from loc strings: ')
+    merged['state_from_loc_str'] = merged['location'].progress_apply(get_state_from_loc_str)
+    tqdm.pandas(desc='City Searching: ')
+    merged['state_from_city'] = merged['location'].progress_apply(city_search)
     merged = merged.explode('state_from_loc_str')
     # Return state if state extracted straight from string,
     # city search otherwise.
