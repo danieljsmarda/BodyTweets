@@ -22,11 +22,10 @@ def handle_identifiers(line):
         except SyntaxError: # unexpected char in identifier
             i += 1
 
-from read_tweets import handle_identifiers
 def count_lines(filepath):
     '''Only used to calculate max results for progress bar.'''
-    with open(filepath, 'r', encoding='utf-16') as f:
-        return len([handle_identifiers(line) for line in f])
+    with open(filepath, 'r', encoding='utf-16-le') as f:
+        return len(f.readlines())
 
 def parse_raw_tweets(raw_tweets_path):
     '''While raw_tweets_path is a variable, the intention is to use this 
