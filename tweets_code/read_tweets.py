@@ -1,6 +1,7 @@
 import json
 import pandas as pd
 from tqdm import tqdm
+from file_utils import count_lines
 
 settings_path = '../settings.json'
 with open(settings_path, 'r') as f:
@@ -21,11 +22,6 @@ def handle_identifiers(line):
             return eval(eval(line[i:]))
         except SyntaxError: # unexpected char in identifier
             i += 1
-
-def count_lines(filepath):
-    '''Only used to calculate max results for progress bar.'''
-    with open(filepath, 'r', encoding='utf-16-le') as f:
-        return len(f.readlines())
 
 def parse_raw_tweets(raw_tweets_path):
     '''While raw_tweets_path is a variable, the intention is to use this 

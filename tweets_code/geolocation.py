@@ -1,5 +1,6 @@
 import shelve
 import json
+import swifter
 import pandas as pd
 import numpy as np
 from tqdm import tqdm
@@ -70,8 +71,15 @@ def geolocate_tweets():
     merged = pd.merge(tweets_df, users_df, on='author_id')
     tqdm.pandas(desc='Getting States from loc strings: ')
     merged['state_from_loc_str'] = merged['location'].progress_apply(get_state_from_loc_str)
-    tqdm.pandas(desc='City Searching: ')
-    merged['state_from_city'] = merged['location'].progress_apply(city_search)
+    try:
+        # Fastest, using swifter
+        merged['state_from_city'] = merged['location'].copy().swifter.progress_bar(enable=True, desc='City Searching: ')\
+            .set_npartitions(20)\
+            .allow_dask_on_strings(enable=True)\
+            .apply(city_search)
+    except: # Slowest using standard apply, if there is some problem with swifter
+        tqdm.pandas(desc='City Searching: ')
+        merged['state_from_city'] = merged['location'].progress_apply(city_search)
     merged = merged.explode('state_from_loc_str')
     # Return state if state extracted straight from string,
     # city search otherwise.
