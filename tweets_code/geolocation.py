@@ -63,7 +63,7 @@ def append_results_parquet(file_location, data):
 
 
 # -- Main function ---
-def geolocate_tweets():
+def geolocate_tweets(raw_tweets_batch_path=raw_tweets_batch_path):
     parse_raw_tweets(raw_tweets_batch_path)
     users_df = pd.read_parquet(batch_users_path)
     tweets_df = pd.read_parquet(batch_tweets_path)
