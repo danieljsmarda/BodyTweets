@@ -1,25 +1,36 @@
 import json
 import logging
 import time
+import os
 from itertools import cycle
 from request_management import send_n_requests
 from file_utils import handle_identifiers
 
-log_path = '/dlabdata1/smarda/logfiles/'
-logging.basicConfig(level=logging.INFO, filename=log_path + time.ctime() + '.log')
 
-#----- Load paths and raw data -----
+# -------------------- Load paths and raw data -----------------------
+# Start run
+run_time = time.ctime()
+
+# Load filepaths from settings
 settings_path = '../settings.json'
 with open(settings_path, 'r') as f:
     settings = json.load(f)
-    raw_tweets_dump_path = settings['filepaths']['raw_tweets_dump_path']
-    raw_tweets_batch_path = settings['filepaths']['raw_tweets_batch_path']
+    raw_tweets_runs_dir = settings['filepaths']['raw_tweets_runs_dir']
+    current_run_dir = os.path.join(raw_tweets_runs_dir, run_time) + '/'
+    os.mkdir(current_run_dir)
+    raw_tweets_dump_path = current_run_dir + 'dump.txt'
+    raw_tweets_batch_path = current_run_dir + 'batch.txt'
     batch_users_path = settings['filepaths']['batch_users_path']
     batch_tweets_path = settings['filepaths']['batch_tweets_path']
     query_times_path = settings['filepaths']['query_times_path']
 
+log_path = raw_tweets_runs_dir + run_time + '.log'
+logging.basicConfig(level=logging.INFO, filename=current_run_dir + 'logfile.log')
+
+
+# Define query inputs
 with open('../public_data/body_vocab.txt', 'r') as f:
-        body_words_list = [word.strip() for word in f.readlines()]
+    body_words_list = [word.strip() for word in f.readlines()]
 body_words_string = '(' + ' OR '.join(body_words_list) + ')'
 
 start_times = cycle([
@@ -40,7 +51,7 @@ end_times = cycle([
 
 MAX_RESULTS = 500
 
-# ----- Query processing functions -----
+# -------------------- Query Processing Functions -----------------------
 def get_url(start_time, end_time):
     params = {
         'max_results' : str(MAX_RESULTS), # Results per request
@@ -74,7 +85,8 @@ def extract_next_token(filename):
 def add_year_to_path(txtfilepath, year):
     return txtfilepath[:-4] + '-' + year + '.txt'
 
-# ----- Main -----
+
+# -------------------- Main  -----------------------
 def init_batch(desired_tweets, n_requests=1):
     collected_tweets = 0
     while collected_tweets < desired_tweets:
@@ -93,8 +105,9 @@ def init_batch(desired_tweets, n_requests=1):
         send_n_requests(dump_path, batch_path,
             base_url, next_token=next_token, n=n_requests)
         collected_tweets += MAX_RESULTS * n_requests
-        logging.info(f'{MAX_RESULTS * n_requests} tweets saved to batch path {batch_path}.')
-        logging.info(f'Total number of tweets collected is now {collected_tweets}.')
+        logging.info(f'{MAX_RESULTS * n_requests} tweets saved to batch path {batch_path}')
+        logging.info(f'Total number of tweets collected is now {collected_tweets}')
+        print(f'Total number of tweets: {collected_tweets}')
 
 if __name__ == '__main__':
-    init_batch(1000, n_requests=1)
+    init_batch(10000, n_requests=1)
