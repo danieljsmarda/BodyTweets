@@ -53,4 +53,4 @@ def send_n_requests(raw_tweets_dump_path, raw_tweets_batch_path, base_url, next_
             b.write('%s\n' % json.dumps(response_text))
 
             # 3 Second sleep = 300 requests / 15 minutes
-            time.sleep(3.01)
+            time.sleep(5.01)
