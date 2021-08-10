@@ -5,7 +5,7 @@ from itertools import cycle
 from request_management import send_n_requests
 from file_utils import handle_identifiers
 
-log_path = '/dlabdata1/smarda/log'
+log_path = '/dlabdata1/smarda/logfiles/'
 logging.basicConfig(level=logging.INFO, filename=log_path + time.ctime() + '.log')
 
 #----- Load paths and raw data -----
@@ -76,22 +76,25 @@ def add_year_to_path(txtfilepath, year):
 
 # ----- Main -----
 def init_batch(desired_tweets, n_requests=1):
-    start_time = next(start_times)
-    end_time = next(end_times)
-    year = start_time[:4]
-    try:
-        next_token = extract_next_token(add_year_to_path(raw_tweets_batch_path, year))
-    except FileNotFoundError: # previous file doesn't exist yet
-        next_token = ''
-    
-
-    dump_path = add_year_to_path(raw_tweets_dump_path, year)
-    batch_path = add_year_to_path(raw_tweets_batch_path, year)
-    base_url = get_url(start_time, end_time)
-    send_n_requests(dump_path, batch_path,
-        base_url, next_token=next_token, n=n_requests)
-    logging.info(f'{MAX_RESULTS * n_requests} tweets saved to batch path {batch_path}.')
-    #geolocate_tweets()
+    collected_tweets = 0
+    while collected_tweets < desired_tweets:
+        start_time = next(start_times)
+        end_time = next(end_times)
+        year = start_time[:4]
+        # Get next_token if exists
+        try:
+            next_token = extract_next_token(add_year_to_path(raw_tweets_batch_path, year))
+        except FileNotFoundError: # previous file doesn't exist yet
+            next_token = ''
+        
+        dump_path = add_year_to_path(raw_tweets_dump_path, year)
+        batch_path = add_year_to_path(raw_tweets_batch_path, year)
+        base_url = get_url(start_time, end_time)
+        send_n_requests(dump_path, batch_path,
+            base_url, next_token=next_token, n=n_requests)
+        collected_tweets += MAX_RESULTS * n_requests
+        logging.info(f'{MAX_RESULTS * n_requests} tweets saved to batch path {batch_path}.')
+        logging.info(f'Total number of tweets collected is now {collected_tweets}.')
 
 if __name__ == '__main__':
     init_batch(1000, n_requests=1)
