@@ -1,7 +1,12 @@
 import json
+import logging
+import time
 from itertools import cycle
 from request_management import send_n_requests
-from geolocation import geolocate_tweets
+from file_utils import handle_identifiers
+
+log_path = '/dlabdata1/smarda/log'
+logging.basicConfig(level=logging.INFO, filename=log_path + time.ctime() + '.log')
 
 #----- Load paths and raw data -----
 settings_path = '../settings.json'
@@ -33,11 +38,12 @@ end_times = cycle([
     '2021-03-01T12:00:00.000Z'
 ])
 
+MAX_RESULTS = 500
 
 # ----- Query processing functions -----
 def get_url(start_time, end_time):
     params = {
-        'max_results' : '500', # Results per request
+        'max_results' : str(MAX_RESULTS), # Results per request
         'start_time' : start_time,
         'end_time' : end_time,
         'query' : body_words_string + ' (lang:en OR lang:und) -is:nullcast',
@@ -61,13 +67,15 @@ def extract_next_token(filename):
         next_token = eval(eval(last_line))['meta']['next_token']
     except IndexError: # list/file is empty
         next_token = ''
+    except SyntaxError: # BOM Error:
+        next_token = handle_identifiers(last_line)['meta']['next_token']
     return next_token
 
 def add_year_to_path(txtfilepath, year):
     return txtfilepath[:-4] + '-' + year + '.txt'
 
 # ----- Main -----
-def init_batch():
+def init_batch(desired_tweets, n_requests=1):
     start_time = next(start_times)
     end_time = next(end_times)
     year = start_time[:4]
@@ -76,13 +84,14 @@ def init_batch():
     except FileNotFoundError: # previous file doesn't exist yet
         next_token = ''
     
+
+    dump_path = add_year_to_path(raw_tweets_dump_path, year)
+    batch_path = add_year_to_path(raw_tweets_batch_path, year)
     base_url = get_url(start_time, end_time)
-    send_n_requests(
-        add_year_to_path(raw_tweets_dump_path, year), 
-        add_year_to_path(raw_tweets_batch_path, year),
-        base_url, next_token=next_token, n=1)
+    send_n_requests(dump_path, batch_path,
+        base_url, next_token=next_token, n=n_requests)
+    logging.info(f'{MAX_RESULTS * n_requests} tweets saved to batch path {batch_path}.')
     #geolocate_tweets()
 
 if __name__ == '__main__':
-    for i in range(5):
-        init_batch()
+    init_batch(1000, n_requests=1)

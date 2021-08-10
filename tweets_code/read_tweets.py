@@ -1,7 +1,7 @@
 import json
 import pandas as pd
 from tqdm import tqdm
-from file_utils import count_lines
+from file_utils import count_lines, handle_identifiers
 
 settings_path = '../settings.json'
 with open(settings_path, 'r') as f:
@@ -13,15 +13,6 @@ with open(settings_path, 'r') as f:
 
 def handle_surrogates(text):
     return text.encode('utf-16', 'surrogatepass').decode('utf-16')
-
-def handle_identifiers(line):
-    # A bit of a hacky fix, but this handles leading BOM bytes in some tweets
-    i = 0
-    while True:
-        try:
-            return eval(eval(line[i:]))
-        except SyntaxError: # unexpected char in identifier
-            i += 1
 
 def parse_raw_tweets(raw_tweets_path):
     '''While raw_tweets_path is a variable, the intention is to use this 
