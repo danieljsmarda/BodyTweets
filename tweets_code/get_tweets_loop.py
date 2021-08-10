@@ -102,12 +102,17 @@ def init_batch(desired_tweets, n_requests=1):
         dump_path = add_year_to_path(raw_tweets_dump_path, year)
         batch_path = add_year_to_path(raw_tweets_batch_path, year)
         base_url = get_url(start_time, end_time)
-        send_n_requests(dump_path, batch_path,
-            base_url, next_token=next_token, n=n_requests)
-        collected_tweets += MAX_RESULTS * n_requests
-        logging.info(f'{MAX_RESULTS * n_requests} tweets saved to batch path {batch_path}')
-        logging.info(f'Total number of tweets collected is now {collected_tweets}')
-        print(f'Total number of tweets: {collected_tweets}')
+        try:
+            send_n_requests(dump_path, batch_path,
+                base_url, next_token=next_token, n=n_requests)
+            collected_tweets += MAX_RESULTS * n_requests
+            logging.info(f'{MAX_RESULTS * n_requests} tweets saved to batch path {batch_path}')
+            logging.info(f'Total number of tweets collected is now {collected_tweets}')
+            print(f'Total number of tweets: {collected_tweets}')
+        except Exception as e:
+            logging.exception("Surprise Exception: ")
+            time.sleep(120)
+        
 
 if __name__ == '__main__':
-    init_batch(10000, n_requests=1)
+    init_batch(2500, n_requests=1)
