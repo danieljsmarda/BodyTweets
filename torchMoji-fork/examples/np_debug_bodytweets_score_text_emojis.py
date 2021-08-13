@@ -75,6 +75,7 @@ def run_predictions(df, sentences):
         # at the root of the torchMoji repo.
         print('Writing results to {}'.format(OUTPUT_PATH))
         scores = []
+        #for i, t in tqdm(enumerate(sentences), desc='Processing this batch', total=len(sentences)):
         for i, t in tqdm(enumerate(sentences), desc='Processing this batch', total=len(sentences)):
             t_tokens = tokenized[i]
             t_score = [t]
@@ -108,16 +109,16 @@ def run_predictions(df, sentences):
     return df
 
 if __name__ == '__main__':
-    # Delete if file doesn't exist 
-    try:
-        os.remove(OUTPUT_PARQUET_PATH)
-    except OSError:
-        pass
-
     columns = ['text','sum_percentages'] + [f'Rank_{rank}_Emoji' for rank in range(1,NUM_OUTPUT_VARS+1)]\
         + [f'Rank_{rank}_Score' for rank in range(1, NUM_OUTPUT_VARS+1)]
     df = pd.DataFrame(columns=columns)
     desc = 'Processing sentences in batches: '
     for start_idx in tqdm(range(0, len(SENTENCES), SENTENCES_BATCH_SIZE), desc=desc):
         df = run_predictions(df, SENTENCES[start_idx:start_idx + SENTENCES_BATCH_SIZE])
+
+    # Delete if file doesn't exist 
+    try:
+        os.remove(OUTPUT_PARQUET_PATH)
+    except OSError:
+        pass
     df.to_parquet(OUTPUT_PARQUET_PATH, compression='gzip')
