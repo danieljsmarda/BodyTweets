@@ -23,7 +23,7 @@ import os
 import pandas as pd
 from tqdm import tqdm
 
-master_tweets_filepath = '/dlabdata1/smarda/private_data/master/all_tweets_master.parquet.gzip'
+master_tweets_filepath = '/dlabdata1/smarda/private_data/master/all_tweets_master_geolocated.parquet.gzip'
 SENTENCES = pd.read_parquet(master_tweets_filepath, columns=['tweet_text'])['tweet_text'].tolist()
 SENTENCES_BATCH_SIZE = 1000
 

@@ -22,6 +22,8 @@ df = pd.read_parquet(processed_files[0])
 for filepath in processed_files:
     df = df.append(pd.read_parquet(filepath))
 df = df.drop_duplicates(subset=['tweet_id', 'final_state'], keep='first')
+master_geolocated_tweets_filepath = '/dlabdata1/smarda/private_data/master/all_tweets_master_geolocated.parquet.gzip'
+df.to_parquet(master_geolocated_tweets_filepath)
 
 # At this point, go to torchMoji-fork/examples/bodytweets_score_text_emojis.py
 
