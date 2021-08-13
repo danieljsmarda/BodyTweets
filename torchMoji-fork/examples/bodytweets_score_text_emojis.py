@@ -16,8 +16,7 @@ from torchmoji.sentence_tokenizer import SentenceTokenizer
 from torchmoji.model_def import torchmoji_emojis
 from torchmoji.global_variables import PRETRAINED_PATH, VOCAB_PATH
 
-OUTPUT_PATH = '/dlabdata1/smarda/private_data/master/all_tweets_master_torchmoji_output-63-maxlen30.csv'
-
+TM_RAW_OUTPUTS_PATH = '/dlabdata1/smarda/private_data/master/torchmoji_raw_outputs.parquet.gzip'
 
 # --------- This code added for BodyTweets project ---------------
 import os
@@ -50,7 +49,7 @@ def top_elements(array, k):
     ind = np.argpartition(array, -k)[-k:]
     return ind[np.argsort(array[ind])][::-1]
 
-maxlen = 30
+maxlen = 300
 
 print('Tokenizing using dictionary from {}'.format(VOCAB_PATH))
 with open(VOCAB_PATH, 'r') as f:
@@ -63,7 +62,7 @@ print(model)
 
 st = SentenceTokenizer(vocabulary, maxlen)
 
-def run_predictions(sentences):
+def run_predictions(df, sentences):
     print('Running predictions.')
     tokenized, _, _ = st.tokenize_sentences(sentences)
     prob = model(tokenized)
@@ -74,7 +73,7 @@ def run_predictions(sentences):
         # at the root of the torchMoji repo.
         print('Writing results to {}'.format(OUTPUT_PATH))
         scores = []
-        for i, t in enumerate(sentences):
+        for i, t in tqdm(enumerate(sentences), desc='Processing this batch', total=len(sentences)):
             t_tokens = tokenized[i]
             t_score = [t]
             t_prob = prob[i]
@@ -83,32 +82,25 @@ def run_predictions(sentences):
             t_score.extend(ind_top)
             t_score.extend([t_prob[ind] for ind in ind_top])
             scores.append(t_score)
-            #print(t_score)
+        try:
+            batch_arr = np.append(batch_arr, np.array(scores), axis=0)
+        except (ValueError, UnboundLocalError): # array hasn't been created yet
+            batch_arr = np.array(scores)
 
-        with open(OUTPUT_PATH, 'a', encoding='utf-16') as csvfile:
-            writer = csv.writer(csvfile, delimiter=str(','), lineterminator='\n')
-            #writer.writerow(['Text', 'Top5%',
-            #                'Emoji_1', 'Emoji_2', 'Emoji_3', 'Emoji_4', 'Emoji_5',
-            #                'Pct_1', 'Pct_2', 'Pct_3', 'Pct_4', 'Pct_5'])
-            for i, row in enumerate(scores):
-                try:
-                    writer.writerow(row)
-                except Exception as e:
-                    print("Exception at row {}!".format(i))
-                    print(e)
+        df = df.append(pd.DataFrame(batch_arr, columns=df.columns))
+    return df
 
 if __name__ == '__main__':
-    # Delete if file doesn't exist 
-    try:
-        os.remove(OUTPUT_PATH)
-    except OSError:
-        pass
-
+    columns = ['text','sum_percentages'] + [f'Rank_{rank}_Emoji' for rank in range(1,NUM_OUTPUT_VARS+1)]\
+        + [f'Rank_{rank}_Score' for rank in range(1, NUM_OUTPUT_VARS+1)]
+    df = pd.DataFrame(columns=columns)
     desc = 'Processing sentences in batches: '
     for start_idx in tqdm(range(0, len(SENTENCES), SENTENCES_BATCH_SIZE), desc=desc):
-        run_predictions(SENTENCES[start_idx:start_idx + SENTENCES_BATCH_SIZE])
-    
-        with open(OUTPUT_PATH, encoding='utf-16-le') as f:
-            reader = csv.reader(f)
-            lines = len(list(reader))
-            assert lines == start_idx + SENTENCES_BATCH_SIZE
+        df = run_predictions(df, SENTENCES[start_idx:start_idx + SENTENCES_BATCH_SIZE])
+
+    # Delete if file existS 
+    try:
+        os.remove(TM_RAW_OUTPUTS_PATH)
+    except OSError:
+        pass
+    df.to_parquet(TM_RAW_OUTPUTS_PATH, compression='gzip')
