@@ -24,7 +24,7 @@ with open(settings_path, 'r') as f:
     batch_tweets_path = settings['filepaths']['batch_tweets_path']
     query_times_path = settings['filepaths']['query_times_path']
 
-log_path = raw_tweets_runs_dir + run_time + '.log'
+#log_path = raw_tweets_runs_dir + run_time + '.log'
 logging.basicConfig(level=logging.INFO, filename=current_run_dir + 'logfile.log')
 
 
@@ -41,6 +41,8 @@ start_times = cycle([
     '2021-02-01T00:00:00.000Z',
 ])
 
+logging.info('These were taken two days earlier than initial plan.')
+'''
 end_times = cycle([
     '2013-01-28T19:00:00.000Z',
     '2015-12-06T12:00:00.000Z',
@@ -48,6 +50,15 @@ end_times = cycle([
     '2019-10-16T02:00:00.000Z',
     '2021-03-01T12:00:00.000Z'
 ])
+'''
+end_times = cycle([
+    '2013-01-26T19:00:00.000Z',
+    '2015-12-04T12:00:00.000Z',
+    '2017-05-31T02:00:00.000Z',
+    '2019-10-14T02:00:00.000Z',
+    '2021-02-27T12:00:00.000Z'
+])
+logging.info(f'The end_times for this run are {str(end_times)}')
 
 MAX_RESULTS = 500
 
@@ -58,7 +69,8 @@ def get_url(start_time, end_time):
         'start_time' : start_time,
         'end_time' : end_time,
         'query' : body_words_string + ' (lang:en OR lang:und) -is:nullcast',
-        'tweet.fields' : 'author_id,created_at',
+        #'tweet.fields' : 'author_id,created_at',
+        'tweet.fields': 'author_id,created_at,lang,public_metrics',
         'expansions' : 'author_id',
         'user.fields' : 'location'
     }
@@ -88,6 +100,7 @@ def add_year_to_path(txtfilepath, year):
 
 # -------------------- Main  -----------------------
 def init_batch(desired_tweets, n_requests=1):
+    logging.info(f'Total requested tweets: {desired_tweets}.')
     collected_tweets = 0
     while collected_tweets < desired_tweets:
         start_time = next(start_times)
@@ -115,4 +128,4 @@ def init_batch(desired_tweets, n_requests=1):
         
 
 if __name__ == '__main__':
-    init_batch(2500, n_requests=1)
+    init_batch(1000000, n_requests=1)
