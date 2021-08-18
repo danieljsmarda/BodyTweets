@@ -1,0 +1,24 @@
+eyes
+ears
+mouth
+nose
+neck
+lips
+teeth
+chest
+breast
+breasts
+belly
+torso
+stomach
+waist
+hips
+legs
+arms
+body
+skin
+"my face"
+"your face"
+"his face"
+"her face"
+"their face"
