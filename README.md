@@ -9,7 +9,7 @@ The bulk of the data acquisition and processing code can be found in the [tweets
 - [organizing the raw API response into organized pandas DataFrames](tweets_code/read_tweets.py)
 - [geolocating the tweets using the algorithm in the report (`geolocation.py`)](tweets_code/geolocation.py), including parallelization for the computation-intensive string processing
 
-The [analysis](analys9s) directory contains the code for the dataset and emotion analysis discussed in chapters 4-6 of the report. 
+The [analysis](analysis) directory contains the code for the dataset and emotion analysis discussed in chapters 4-6 of the report. 
 
 ### Collected Dataset
 
