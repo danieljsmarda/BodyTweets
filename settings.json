@@ -1,0 +1,15 @@
+{
+    "bearer_token" : "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+    "cookie" : "guest_id=v1%11111111111111111111; personalization_id=\"v1_aaaaaaaaaaaaaaaaaaaaaa==\"",
+    "filepaths": {
+        "raw_tweets_runs_dir" : "/dlabdata1/smarda/private_data/tweet_collection_runs/",
+        "raw_tweets_dump_path" : "/dlabdata1/smarda/private_data/interim/dump.txt",
+        "raw_tweets_batch_path" : "/dlabdata1/smarda/private_data/interim/batch.txt",
+        "batch_users_path" : "/dlabdata1/smarda/private_data/interim/geolocation_users.parquet",
+        "batch_tweets_path" : "/dlabdata1/smarda/private_data/interim/geolocation_tweets.parquet",
+        "location_shelf_path" : "../public_data/location_data",
+        "geolocated_all_columns_path" : "/dlabdata1/smarda/private_data/interim/geolocated_all_columns.parquet.gzip",
+        "geolocated_relevant_columns_path" : "/dlabdata1/smarda/private_data/interim/geolocated_relevant_columns.parquet.gzip",
+        "query_times_path" : "/dlabdata1/smarda/private_data/interim/query_times.txt"
+    }
+}
