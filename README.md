@@ -5,8 +5,8 @@ Welcome. This repository contains the relevant code for the paper "BodyTweets: F
 The bulk of the data acquisition and processing code can be found in the [tweets_code](tweets_code) directory. In separate files, this directory contains python scripts for:
 
 - querying the Twitter API (both in [single-batch form](tweets_code/get_tweets.py) and [continuous-loop form](tweets_code/get_tweets_loop.py))
-- [processing errors and timing in requests](tweets_code/request_management.py)
-- [organizing the raw-API response into organized pandas DataFrames](tweets_code/read_tweets.py)
+- [timing and error-handling of requests](tweets_code/request_management.py)
+- [organizing the raw API response into organized pandas DataFrames](tweets_code/read_tweets.py)
 - [geolocating the tweets using the algorithm in the report (`geolocation.py`)](tweets_code/geolocation.py), including parallelization for the computation-intensive string processing
 
 The [analysis](analys9s) directory contains the code for the dataset and emotion analysis discussed in chapters 4-6 of the report. 
