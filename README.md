@@ -15,4 +15,4 @@ The [analysis](analysis) directory contains the code for the dataset and emotion
 
 The dataset can be found in the [public_data](public_data) folder in the file [`final_tweet_id_list.csv`](public_data/final_tweet_id_list.csv). The Twitter API User Agreement prohibits publication of any further information beyond the tweet IDs, but information about the tweets including the user ID, timestamp, and content can be re-retrieved using the [Twitter API](https://developer.twitter.com/en/docs/twitter-api/tweets/lookup/quick-start).
 
-For any further questions, please feel free to contact the author (Daniel Smarda) at: X.Y<span>@</span>alumni.epfl.ch with X=daniel and Y=smarda.
+For any further questions, please feel free to contact me at: X.Y<span>@</span>alumni.epfl.ch with X=daniel and Y=smarda.
