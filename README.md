@@ -1,6 +1,6 @@
 # BodyTweets
 
-Welcome. This repository contains the relevant code for the paper "BodyTweets: Foundations for Social Media Analysis of Body-Based Language". This was a thesis paper for the MSc in Data Science at EPFL in Lausanne, Switzerland. You can find the report at [report.pdf](report.pdf). The rough structure of the repo is as follows.
+Welcome! This repository contains the relevant code for the paper "BodyTweets: Foundations for Social Media Analysis of Body-Based Language". This was a thesis paper for the MSc in Data Science at EPFL in Lausanne, Switzerland. You can find the report at [report.pdf](report.pdf). The rough structure of the repo is as follows.
 
 The bulk of the data acquisition and processing code can be found in the [tweets_code](tweets_code) directory. In separate files, this directory contains python scripts for:
 
