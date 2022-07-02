@@ -1,6 +1,6 @@
 # BodyTweets
 
-Welcome! This repository contains the relevant code for the paper "BodyTweets: Foundations for Social Media Analysis of Body-Based Language". This was a thesis paper for the MSc in Data Science at EPFL in Lausanne, Switzerland. The project collects and discusses a custom dataset of (text-based, not image-based) body shaming on Twitter. It geolocates these Tweets using user-string based geolocation, then assesses emotion content using the HuggingFace [DeepMoji](https://github.com/bfelbo/DeepMoji) tool and correlates these emotion measurements to demographic data taken from the [American Community Survey](https://www.census.gov/programs-surveys/acs). 
+Welcome! This repository contains the code for the paper "BodyTweets: Foundations for Social Media Analysis of Body-Based Language". This was a thesis paper for the MSc in Data Science at EPFL in Lausanne, Switzerland. The project collects and discusses a custom dataset of (text-based, not image-based) body shaming on Twitter. It geolocates these Tweets using user-string based geolocation, then assesses emotion content using the HuggingFace [DeepMoji](https://github.com/bfelbo/DeepMoji) tool and correlates these emotion measurements to demographic data taken from the [American Community Survey](https://www.census.gov/programs-surveys/acs). 
 
 For the paper, see [report.pdf](report.pdf). Regarding code, the bulk of the data acquisition and processing scripts can be found in the [tweets_code](tweets_code) directory. In separate files, this directory contains Python code for:
 
